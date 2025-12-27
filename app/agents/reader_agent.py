@@ -2,6 +2,7 @@ from orchestrator import AgentState
 from prompts import build_reader_prompt
 from langchain.agents import create_agent
 from schemas import ReaderOutputSchema
+from langchain
 def reader_agent(state: AgentState) -> AgentState:
     """_summary_
        This agent reads the text and extract different key points for the director agent
@@ -12,7 +13,7 @@ def reader_agent(state: AgentState) -> AgentState:
     Returns:
         AgentState: Returns summary, scene, key_visuals etc.
     """
-    page_number = state['page_number']
+    page_number = state['page_number']  
     story = state['memory_agent_output']['story']
     characters = state['memory_agent_output']['characters']
     relationships = state['memory_agent_output']['relationships']
@@ -20,6 +21,7 @@ def reader_agent(state: AgentState) -> AgentState:
 
     prompt = build_reader_prompt(story=story, characters=characters, relationships=relationships, page_text=page_text)
     print(prompt);
+    
     
     agent = create_agent(
         model="gpt-5",
