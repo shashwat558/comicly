@@ -1,5 +1,8 @@
 venv/
 .env/
 .venv/
-env/
+
+# local env files
+.env*.local
+.env
 
