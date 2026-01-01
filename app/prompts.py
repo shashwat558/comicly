@@ -6,8 +6,8 @@ def build_reader_prompt(story, characters, relationships, page_text):
        Your goal is to understand a book page in context of the ongoing story.
        Read the current page carefully and summarize what is happening, who is involved, and what emotions are expressed.
        
-       previously in the story: {story.summary}
-       Active thread: {story.active_threads}
+       previously in the story: {story['summary']}
+       Active thread: {story['active_threads']}
        known characters: {characters}
        Key relationships: {relationships}
        current_page: {page_text}
