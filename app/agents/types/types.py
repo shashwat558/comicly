@@ -55,11 +55,13 @@ class MemoryAgentOutput(TypedDict):
 
 class AgentState(TypedDict):
     page_text: str
+    page_number: int
     prev_image_url: str
+    
     current_image_url: str
     reader_output: ReaderOutput
     memory_agent_output: MemoryAgentOutput
     visual_prompt: str
     image_metadata: str
-    page_number: int
+    
     memory: dict
