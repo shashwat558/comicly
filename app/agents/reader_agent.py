@@ -22,6 +22,19 @@ def reader_agent(state: AgentState) -> AgentState:
         AgentState: Returns summary, scene, key_visuals etc.
     """
     page_number = state['page_number']  
+    if page_number == 1:
+        story = {
+            "summary": "",
+            "current": "",
+            "tone": "",
+            "active_threads": []
+        }
+        characters = {}
+        relationships = {}
+        state['memory']['story'] = story
+        state['memory']['characters'] = characters
+        state['memory']['relationships'] = relationships
+       
     story = state['memory']['story']
     characters = state['memory']['characters']
     relationships = state['memory']['relationships']
@@ -44,7 +57,8 @@ def reader_agent(state: AgentState) -> AgentState:
     
     result = agent.invoke({
         "messages": [{"role": "user", "content": prompt}]
-    })
+    });
+    
     
     
     
