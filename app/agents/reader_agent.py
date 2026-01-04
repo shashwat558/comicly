@@ -59,9 +59,8 @@ def reader_agent(state: AgentState) -> AgentState:
         "messages": [{"role": "user", "content": prompt}]
     });
     
-    
-    
-    
-    print(result["structured_response"])
+    state['reader_output'] = result["structured_response"]
+    print("Reader Agent Output:", state['reader_output'])
+    return state
     
 
