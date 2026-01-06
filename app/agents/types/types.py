@@ -12,6 +12,8 @@ class ReaderOutput(TypedDict):
     themes: List[str]
     tension_level: float
 
+class DirectorOutput(TypedDict):
+    images_prompt: str
 class StorySummary(TypedDict):
     summary: str
     current: str

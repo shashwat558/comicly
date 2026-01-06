@@ -14,4 +14,6 @@ class ReaderOutputSchema(BaseModel):
     themes: List[str] = Field(description="Underlying ideas (love, fear, betrayal)")
     tension_level: float = Field(description="0-1 numeric measure of drama and intensity")
     
-    
+class DirectorOutputSchema(BaseModel):
+    image_prompt: str = Field(description="Prompt for image generation")
+ 
