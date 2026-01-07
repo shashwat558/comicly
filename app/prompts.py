@@ -26,3 +26,95 @@ def build_reader_prompt(story, characters, relationships, page_text):
 
 """
 
+def build_director_prompt(reader_output, visual_style, page_number):
+    if page_number == 1:
+        style_instructions = f"""
+        You are a film director creating the opening shot of a visual story.
+
+        Based on the story understanding below, describe a single cinematic scene that introduces the world and characters.
+
+        Focus on:
+
+        atmosphere and mood
+
+        spatial composition
+
+        character presence and body language
+
+        lighting and environment
+
+        Do not assume an established art style.
+        Do not reference any previous images.
+        Do not explain the story — only describe what should be drawn.
+
+        Story context:
+        {reader_output["summary"]}
+
+        Scene setting:
+        {reader_output["scene"]}
+
+        Characters present:
+        {reader_output["entities"]}
+
+        Emotional tone:
+        {reader_output["emotions"]}
+        
+        Actions:
+        {reader_output["actions"]}
+
+        Key visual elements:
+        {reader_output["key_visuals"]}
+
+        Write one concise but vivid visual description suitable for an image generation model.
+                """
+        return style_instructions
+    else:
+        style_instructions = f"""
+        You are a film director continuing a visual story.
+
+        Describe the next scene as a continuation of the previous image, maintaining strict visual consistency.
+
+        The overall visual style of the story is already established.
+        You must apply it, not redefine it.
+
+        Established visual style (for consistency):
+
+        Art style: {visual_style["art_style"]}
+
+        Lighting: {visual_style["lighting"]}
+
+        Color palette: {visual_style["palette"]}  
+        Realism level: {visual_style["realism"]}
+
+        Focus on:
+
+        what has changed since the last scene
+
+        character movement, posture, or expression
+
+        evolving mood within the same style
+
+        cinematic framing
+
+        Do not introduce a new art style.
+        Do not restate or modify the visual style.
+        Do not explain the story.
+
+        Story context:
+        {reader_output["summary"]}
+
+        Scene setting:
+        {reader_output["scene"]}
+
+        Characters present:
+        {reader_output["entities"]}
+
+        Emotional tone:
+        {reader_output["emotions"]}
+
+        Key visual elements:
+        {reader_output["key_visuals"]}
+
+        Write one concise but vivid visual description suitable for an image generation model.
+                """
+        return style_instructions
