@@ -1,4 +1,4 @@
-from typing import TypedDict, List, Dict
+from typing import Any, Dict, List, Optional, TypedDict
 import datetime
 
 class ReaderOutput(TypedDict):
@@ -56,13 +56,13 @@ class MemoryAgentOutput(TypedDict):
     
 
 class AgentState(TypedDict):
-    page_text: str | None
-    page_number: int | 0
-    prev_image_url: str | None
-    director_output: DirectorOutput | None
-    current_image_url: str | None
-    reader_output: ReaderOutput | None
-    memory: MemoryAgentOutput | None
-    visual_prompt: str | None
-    image_metadata: str | None
+    page_text: Optional[str]
+    page_number: int
+    prev_image_url: Optional[str]
+    director_output: Optional[DirectorOutput]
+    current_image_url: Optional[str]
+    reader_output: Optional[ReaderOutput]
+    memory: Optional[MemoryAgentOutput]
+    visual_prompt: Optional[str]
+    image_metadata: Optional[Dict[str, Any]]
     
