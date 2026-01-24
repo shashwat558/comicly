@@ -16,15 +16,18 @@ def director_agent(state: AgentState) -> AgentState:
     Returns:
         AgentState: Updated state with director output
     """
-    
+    print("HI")
     reader_output = state["reader_output"]
     page_number = state["page_number"]
-
+    print(reader_output)
+    print("Hi again")
     prompt = ""
     if page_number == 1:
         prompt = build_director_prompt(reader_output, state["memory"]["visual_style"], page_number);
+        print("First Page Prompt Built")
     else:
-        prompt = build_director_prompt(reader_output, state["memory"]["visual_style"],["visual_style"], page_number);
+        prompt = build_director_prompt(reader_output, state["memory"]["visual_style"], page_number);
+        print("Subsequent Page Prompt Built")
     
     model = ChatGoogleGenerativeAI(
       model="gemini-2.5-flash",
@@ -42,6 +45,7 @@ def director_agent(state: AgentState) -> AgentState:
     result = agent.invoke({
         "messages": [{"role": "user", "content": prompt}]
     });
+    print(result);
     
-    state["director_output"] = result["structured_output"];
+    state["director_output"] = result["structured_response"];
     return state;

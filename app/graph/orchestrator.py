@@ -5,12 +5,14 @@ from langgraph.graph import StateGraph
 
 from app.agents.reader_agent import reader_agent
 from app.agents.types.types import AgentState
-
+from app.agents.director_agent import director_agent
 
 def build_graph():
     graph = StateGraph(AgentState)
     graph.add_node("reader_agent", reader_agent)
+    graph.add_node("director_agent", director_agent)
     graph.set_entry_point("reader_agent")
+    graph.add_edge("reader_agent", "director_agent")
     return graph.compile()
 
 

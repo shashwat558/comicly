@@ -61,6 +61,7 @@ def reader_agent(state: AgentState) -> AgentState:
     
     state['reader_output'] = result["structured_response"]
     print("Reader Agent Output:", state['reader_output'])
+    print("-----")
     return state
     
 
