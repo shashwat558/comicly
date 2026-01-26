@@ -48,22 +48,22 @@ def build_director_prompt(reader_output, visual_style, page_number):
         Do not explain the story — only describe what should be drawn.
 
         Story context:
-        {reader_output["summary"]}
+        {reader_output.summary}
 
         Scene setting:
-        {reader_output["scene"]}
+        {reader_output.scene}
 
         Characters present:
-        {reader_output["entities"]}
+        {reader_output.entities}
 
         Emotional tone:
-        {reader_output["emotions"]}
+        {reader_output.emotions}
         
         Actions:
-        {reader_output["actions"]}
+        {reader_output.actions}
 
         Key visual elements:
-        {reader_output["key_visuals"]}
+        {reader_output.key_visuals}
 
         Write one concise but vivid visual description suitable for an image generation model.
                 """
