@@ -17,3 +17,5 @@ class ReaderOutputSchema(BaseModel):
 class DirectorOutputSchema(BaseModel):
     image_prompt: str = Field(description="Prompt for image generation")
  
+class ArtistOutputSchema(BaseModel):
+    image_url: str = Field(description="URL of the generated image")

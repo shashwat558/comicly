@@ -20,6 +20,8 @@ class StorySummary(TypedDict):
     tone: str
     active_threads: List[str]
 
+class ArtistOutput(TypedDict):
+    image_url: str
 class IndividualCharacterSummary(TypedDict):
     appearance: str
     traits: List[str]
@@ -62,6 +64,7 @@ class AgentState(TypedDict):
     director_output: Optional[DirectorOutput]
     current_image_url: Optional[str]
     reader_output: Optional[ReaderOutput]
+    artist_output: Optional[ArtistOutput]
     memory: Optional[MemoryAgentOutput]
     visual_prompt: Optional[str]
     image_metadata: Optional[Dict[str, Any]]

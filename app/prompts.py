@@ -118,3 +118,27 @@ def build_director_prompt(reader_output, visual_style, page_number):
         Write one concise but vivid visual description suitable for an image generation model.
                 """
         return style_instructions
+
+
+def build_artist_prompt(director_output, prev_image_url):
+    return f"""
+       You are a skilled artist translating a director's vision into a compelling image.
+
+       Based on the director's detailed scene description below, create an image that captures the intended mood, composition, and visual elements.
+
+       Director's scene description:
+       {director_output['images_prompt']}
+
+       Reference the previous image for continuity:
+       {prev_image_url}
+
+       Instructions:
+
+       Ensure the new image reflects the director's vision accurately.
+
+       Maintain visual consistency with the previous image in terms of character appearance, setting, and style.
+
+       Focus on key elements highlighted by the director.
+
+       Produce a high-quality image URL that represents the scene vividly.
+    """

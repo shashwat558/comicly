@@ -11,8 +11,10 @@ def build_graph():
     graph = StateGraph(AgentState)
     graph.add_node("reader_agent", reader_agent)
     graph.add_node("director_agent", director_agent)
+    graph.add_node("artist_agent", artist_agent);
     graph.set_entry_point("reader_agent")
     graph.add_edge("reader_agent", "director_agent")
+    
     return graph.compile()
 
 
