@@ -73,4 +73,5 @@ class AgentState(TypedDict):
     memory: Optional[MemoryAgentOutput]
     visual_prompt: Optional[str]
     image_metadata: Optional[Dict[str, Any]]
+    book_meta: Optional[BookMeta]
     
