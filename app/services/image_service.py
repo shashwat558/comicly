@@ -9,7 +9,7 @@ s3 = boto3.client(
     
 );
 
-def upload_image_to_s3(image_bytes: bytes, bucket_name:str, object_name:str) -> str:
+async def upload_image_to_s3(image_bytes: bytes, bucket_name:str, object_name:str) -> str:
     """Uploads image bytes to S3 and returns the URL.
 
     Args:
@@ -20,7 +20,7 @@ def upload_image_to_s3(image_bytes: bytes, bucket_name:str, object_name:str) -> 
     Returns:
         str: The URL of the uploaded image.
     """
-    s3.put_object(Bucket=bucket_name, Key=object_name, Body=image_bytes, ContentType='image/png')
+    await s3.put_object(Bucket=bucket_name, Key=object_name, Body=image_bytes, ContentType='image/png')
     url = f"{s3.meta.endpoint_url}/{bucket_name}/{object_name}"
     return url
 

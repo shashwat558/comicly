@@ -56,6 +56,11 @@ class MemoryAgentOutput(TypedDict):
     relationships: Relationships
     meta: SystemMeta
     
+class BookMeta(TypedDict):
+    title: str
+    author: str
+    publication_date: str
+    isbn: str
 
 class AgentState(TypedDict):
     page_text: Optional[str]

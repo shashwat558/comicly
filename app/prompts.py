@@ -120,25 +120,32 @@ def build_director_prompt(reader_output, visual_style, page_number):
         return style_instructions
 
 
-def build_artist_prompt(director_output, prev_image_url):
-    return f"""
-       You are a skilled artist translating a director's vision into a compelling image.
+def build_artist_prompt(director_output, visual_style, prev_image_url=None):
+    base_prompt = f"""
+You are a skilled artist translating a director's vision into a compelling image.
 
-       Based on the director's detailed scene description below, create an image that captures the intended mood, composition, and visual elements.
+Based on the director's detailed scene description below, create an image that captures the intended mood, composition, and visual elements.
 
-       Director's scene description:
-       {director_output['images_prompt']}
+Director's scene description:
+{director_output['images_prompt']}
 
-       Reference the previous image for continuity:
-       {prev_image_url}
+Established visual style (for consistency):
+- Art style: {visual_style["art_style"]}
+- Lighting: {visual_style["lighting"]}
+- Color palette: {visual_style["palette"]}
+- Realism level: {visual_style["realism"]}
 
-       Instructions:
+Instructions:
 
-       Ensure the new image reflects the director's vision accurately.
-
-       Maintain visual consistency with the previous image in terms of character appearance, setting, and style.
-
-       Focus on key elements highlighted by the director.
-
-       Produce a high-quality image URL that represents the scene vividly.
-    """
+1. Ensure the new image reflects the director's vision accurately.
+2. Maintain visual consistency with the previous image in terms of character appearance, setting, and style.
+3. Focus on key elements highlighted by the director.
+4. Create a cohesive scene that flows naturally from the previous frame.
+5. Pay attention to character positioning, expressions, and the overall narrative flow.
+6. Ensure lighting and mood align with the established visual style.
+"""
+    
+    if prev_image_url:
+        base_prompt += f"\nReference the previous image above for visual continuity and style consistency."
+    
+    return base_prompt
