@@ -127,7 +127,7 @@ You are a skilled artist translating a director's vision into a compelling image
 Based on the director's detailed scene description below, create an image that captures the intended mood, composition, and visual elements.
 
 Director's scene description:
-{director_output['images_prompt']}
+{director_output.image_prompt}
 
 Established visual style (for consistency):
 - Art style: {visual_style["art_style"]}
