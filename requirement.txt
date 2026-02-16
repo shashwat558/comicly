@@ -1,0 +1,10 @@
+fastapi
+pydantic
+langchain
+langchain-google-genai
+langgraph
+google-genai
+requests
+python-dotenv
+pillow
+boto3

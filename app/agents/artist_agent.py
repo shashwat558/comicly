@@ -34,7 +34,9 @@ def artist_agent(state: AgentState) -> AgentState:
         resp = requests.get(prev_image_url)
         resp.raise_for_status()
         prev_image = Image.open(io.BytesIO(resp.content));
-        prev_image_number =prev_image.split("_")[-1].split(".")[0];
+        filename = prev_image_url.rsplit("/", 1)[-1]
+        prev_image_number = filename.rsplit("_", 1)[-1].split(".", 1)[0]
+
         
         contents.append(prev_image)
         

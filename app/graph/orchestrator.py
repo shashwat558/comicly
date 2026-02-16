@@ -26,7 +26,7 @@ graph_app = build_graph()
 _DEFAULT_STATE: AgentState = {
     "page_number": 1,
     "page_text": "Panel 1: Alex arrives at the neon-lit alley and notices a mysterious shadow.",
-    "prev_image_url": "http://localhost:9001/api/v1/download-shared-object/aHR0cDovLzEyNy4wLjAuMTo5MDAwL2NvbWljbHkvY3JpbWVfYW5kX3B1bmlzaG1lbnRfMS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1MSDVMR1NFVDg0S1U5SDI0TkI1VyUyRjIwMjYwMTI4JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDEyOFQxODI4MzNaJlgtQW16LUV4cGlyZXM9NDMxOTImWC1BbXotU2VjdXJpdHktVG9rZW49ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmhZMk5sYzNOTExZa2lPaUpNU0RWTVIxTkZWRGcwUzFVNVNESTBUa0kxVnlJc0ltVjRjQ0k2TVRjMk9UWTJNakEzT0N3aWNHRnlaVzUwSWpvaWJXbHVhVzloWkcxcGJpSjkua0xXeVlLcGlRc1dSS3BnVi1NdVp1bUhOWFBVeWRTTkswRGNOckdnQUJxc2ZFdXh2SVdNOGxXX2lCekZRdDVxVldITzhIa2pHY25MNEtCSU41Wi1KSmcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JnZlcnNpb25JZD1udWxsJlgtQW16LVNpZ25hdHVyZT1jNTg2Yzg3OGE3MTAxN2FiMzNjZjg1Njg2NmUyNzhiOWVhNWFhNmM0MDdmYjgxOGE2OWU5ZTdiOTlhY2M4MDRm",
+    "prev_image_url": "http://localhost:9000/comicly/crime_and_punishment_1.png",
     "current_image_url": "https://example.com/images/page1.png",
     "book_meta": {
         "title": "Crime and Punishment",
