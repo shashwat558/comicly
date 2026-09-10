@@ -9,7 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.core.db import get_db
 from app.core.redis import publish_progress
-from app.models.book import Book, Page
+from app.core.security import get_current_user
+from app.models.book import Page
+from app.models.user import User
+from app.routes.v1.books import owned_book
 from app.schemas.v1.generate import GenerateRequest, GenerateResponse
 
 router = APIRouter()
@@ -25,10 +28,13 @@ async def get_pool():
 
 
 @router.post("/{book_id}/generate", response_model=GenerateResponse, status_code=202)
-async def enqueue_generate(book_id: uuid.UUID, body: GenerateRequest, db: AsyncSession = Depends(get_db)):
-    book = await db.get(Book, book_id)
-    if book is None:
-        raise HTTPException(404, "Book not found")
+async def enqueue_generate(
+    book_id: uuid.UUID,
+    body: GenerateRequest,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    await owned_book(db, user, book_id)
     page = (await db.execute(
         select(Page).where(Page.book_id == book_id, Page.page_no == body.page_no)
     )).scalar_one_or_none()

@@ -27,7 +27,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 async def init_db() -> None:
 
 
-    from app.models import book, character, frame  # noqa: F401
+    from app.models import book, character, frame, user  # noqa: F401
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

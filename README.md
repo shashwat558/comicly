@@ -25,7 +25,10 @@ Dev without a Gemini key: set `MOCK_GENERATION=true` in `.env` — deterministic
 - `POST /api/v1/books/{id}/generate {"page_no":1,"force":false}` → `202 {job_id}` (`style_override` only on page 1 — style locks after)
 - `GET /api/v1/jobs/{job_id}` + `GET /api/v1/jobs/{job_id}/stream` (SSE: queued→reading→directing→rendering→saving→done/error)
 - `GET /api/v1/books/{id}/frames/{n}` (image_url + agent outputs), `GET .../characters`, `GET .../frames`
+- Auth: `POST /api/v1/auth/signup`, `POST /api/v1/auth/login` → JWT, `GET /api/v1/auth/me`. Everything else needs `Authorization: Bearer <token>`; books are private per user (other users' ids return 404). The SSE stream also accepts `?token=` since EventSource can't set headers.
 - `GET /health`, `GET /ready`
+
+Claim pre-auth orphan books: `uv run python scripts/claim_books.py --email you@example.com`.
 
 Legacy `POST /api/upload`, `POST /api/generate` still mounted for the old frontend.
 

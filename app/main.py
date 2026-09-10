@@ -1,11 +1,13 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
 from app.core.db import init_db
+from app.core.security import get_current_user
 from app.routes.v1 import books_router, generate_router, jobs_router, pages_router
+from app.routes.v1.auth import router as auth_router
 
 
 @asynccontextmanager
@@ -37,17 +39,20 @@ def create_app() -> FastAPI:
     )
 
 
-    app.include_router(books_router, prefix="/api/v1/books", tags=["books"])
-    app.include_router(pages_router, prefix="/api/v1/books", tags=["pages"])
-    app.include_router(generate_router, prefix="/api/v1/books", tags=["generate"])
+    app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
+    authed = [Depends(get_current_user)]
+    app.include_router(books_router, prefix="/api/v1/books", tags=["books"], dependencies=authed)
+    app.include_router(pages_router, prefix="/api/v1/books", tags=["pages"], dependencies=authed)
+    app.include_router(generate_router, prefix="/api/v1/books", tags=["generate"], dependencies=authed)
+    # jobs handles its own auth (the SSE stream also accepts ?token=)
     app.include_router(jobs_router, prefix="/api/v1/jobs", tags=["jobs"])
 
 
     try:
         from app.routes import generate as legacy_generate
         from app.routes import upload as legacy_upload
-        app.include_router(legacy_upload.router, prefix="/api/upload", tags=["legacy-upload"])
-        app.include_router(legacy_generate.router, prefix="/api/generate", tags=["legacy-generate"])
+        app.include_router(legacy_upload.router, prefix="/api/upload", tags=["legacy-upload"], dependencies=authed)
+        app.include_router(legacy_generate.router, prefix="/api/generate", tags=["legacy-generate"], dependencies=authed)
     except Exception as e:
         print(f"Legacy routers not mounted: {e}")
 

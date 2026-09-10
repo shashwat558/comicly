@@ -12,6 +12,10 @@ class Book(Base):
     __tablename__ = "books"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    # null only for books created before auth existed, those stay invisible
+    owner_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True
+    )
     title: Mapped[str] = mapped_column(String(500), nullable=False)
     author: Mapped[str] = mapped_column(String(500), default="Unknown")
     book_metadata: Mapped[dict] = mapped_column("metadata", JSONB, default=dict)
@@ -25,6 +29,7 @@ class Book(Base):
     pages: Mapped[list["Page"]] = relationship(back_populates="book", cascade="all, delete-orphan")
     characters: Mapped[list["Character"]] = relationship(back_populates="book", cascade="all, delete-orphan")
     frames: Mapped[list["Frame"]] = relationship(back_populates="book", cascade="all, delete-orphan")
+    owner: Mapped["User | None"] = relationship(back_populates="books")
 
 
 class Page(Base):

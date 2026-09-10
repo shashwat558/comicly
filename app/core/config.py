@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     frontend_url: str = Field(default="http://localhost:3000", alias="FRONTEND_URL")
     max_upload_mb: int = Field(default=50, alias="MAX_UPLOAD_MB")
     mock_generation: bool = Field(default=False, alias="MOCK_GENERATION")
+    # dev default is fine for local, set a real secret in prod
+    auth_secret: str = Field(default="dev-only-change-me", alias="AUTH_SECRET")
+    access_token_minutes: int = Field(default=60, alias="ACCESS_TOKEN_MINUTES")
 
 
 @lru_cache

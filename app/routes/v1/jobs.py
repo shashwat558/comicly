@@ -1,16 +1,36 @@
 import json
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 from sse_starlette.sse import EventSourceResponse
 
+from app.core.db import get_db
 from app.core.redis import get_redis, last_progress
+from app.core.security import get_current_user, user_for_token
+from app.models.user import User
 from app.schemas.v1.generate import JobStatus
 
 router = APIRouter()
 
 
-@router.get("/{job_id}", response_model=JobStatus)
+async def stream_user(
+    request: Request,
+    token: str | None = Query(None),
+    db: AsyncSession = Depends(get_db),
+) -> User:
+    # EventSource can't send headers, so the stream also takes ?token=
+    header = request.headers.get("authorization", "")
+    if header.lower().startswith("bearer "):
+        token = header[7:].strip()
+    if not token:
+        from fastapi import HTTPException
+        from fastapi import status as http_status
+        raise HTTPException(http_status.HTTP_401_UNAUTHORIZED, "Not authenticated.")
+    return await user_for_token(db, token)
+
+
+@router.get("/{job_id}", response_model=JobStatus, dependencies=[Depends(get_current_user)])
 async def job_status(job_id: str):
     data = await last_progress(job_id)
     if data is None:
@@ -23,7 +43,7 @@ async def job_status(job_id: str):
 
 
 @router.get("/{job_id}/stream")
-async def job_stream(job_id: str):
+async def job_stream(job_id: str, _user: User = Depends(stream_user)):
     async def gen():
         r = get_redis()
         pubsub = r.pubsub()

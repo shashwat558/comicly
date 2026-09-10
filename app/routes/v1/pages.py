@@ -5,8 +5,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
-from app.models.book import Book, Page
+from app.core.security import get_current_user
+from app.models.book import Page
 from app.models.frame import Frame
+from app.models.user import User
+from app.routes.v1.books import owned_book
 from app.schemas.v1.book import FrameOut, PageOut
 
 router = APIRouter()
@@ -18,10 +21,9 @@ async def list_pages(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
-    book = await db.get(Book, book_id)
-    if book is None:
-        raise HTTPException(404, "Book not found")
+    await owned_book(db, user, book_id)
     rows = (await db.execute(
         select(Page).where(Page.book_id == book_id)
         .order_by(Page.page_no)
@@ -31,7 +33,13 @@ async def list_pages(
 
 
 @router.get("/{book_id}/pages/{page_no}", response_model=PageOut)
-async def get_page(book_id: uuid.UUID, page_no: int, db: AsyncSession = Depends(get_db)):
+async def get_page(
+    book_id: uuid.UUID,
+    page_no: int,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    await owned_book(db, user, book_id)
     row = (await db.execute(
         select(Page).where(Page.book_id == book_id, Page.page_no == page_no)
     )).scalar_one_or_none()
@@ -41,7 +49,13 @@ async def get_page(book_id: uuid.UUID, page_no: int, db: AsyncSession = Depends(
 
 
 @router.get("/{book_id}/frames/{page_no}", response_model=FrameOut)
-async def get_frame(book_id: uuid.UUID, page_no: int, db: AsyncSession = Depends(get_db)):
+async def get_frame(
+    book_id: uuid.UUID,
+    page_no: int,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    await owned_book(db, user, book_id)
     row = (await db.execute(
         select(Frame).where(Frame.book_id == book_id, Frame.page_no == page_no)
     )).scalar_one_or_none()
