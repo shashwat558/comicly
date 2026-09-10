@@ -5,13 +5,13 @@ def build_reader_prompt(story, characters, relationships, page_text):
        You are a literary analyst and story interpreter.
        Your goal is to understand a book page in context of the ongoing story.
        Read the current page carefully and summarize what is happening, who is involved, and what emotions are expressed.
-       
+
        previously in the story: {story['summary']}
        Active thread: {story['active_threads']}
        known characters: {characters}
        Key relationships: {relationships}
        current_page: {page_text}
-       
+
        Instructions:
 
        Identify key events and describe them briefly.
@@ -58,7 +58,7 @@ def build_director_prompt(reader_output, visual_style, page_number):
 
         Emotional tone:
         {reader_output.emotions}
-        
+
         Actions:
         {reader_output.actions}
 
@@ -83,7 +83,7 @@ def build_director_prompt(reader_output, visual_style, page_number):
 
         Lighting: {visual_style["lighting"]}
 
-        Color palette: {visual_style["palette"]}  
+        Color palette: {visual_style["palette"]}
         Realism level: {visual_style["realism"]}
 
         Focus on:
@@ -144,8 +144,8 @@ Instructions:
 5. Pay attention to character positioning, expressions, and the overall narrative flow.
 6. Ensure lighting and mood align with the established visual style.
 """
-    
+
     if prev_image_url:
-        base_prompt += f"\nReference the previous image above for visual continuity and style consistency."
-    
+        base_prompt += "\nReference the previous image above for visual continuity and style consistency."
+
     return base_prompt

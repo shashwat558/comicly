@@ -3,21 +3,22 @@ from copy import deepcopy
 
 from langgraph.graph import StateGraph
 
+from app.agents.artist_agent import artist_agent
+from app.agents.director_agent import director_agent
 from app.agents.reader_agent import reader_agent
 from app.agents.types.types import AgentState
-from app.agents.director_agent import director_agent
-from app.agents.artist_agent import artist_agent
+
 
 def build_graph():
     graph = StateGraph(AgentState)
     graph.add_node("reader_agent", reader_agent)
     graph.add_node("director_agent", director_agent)
-    graph.add_node("artist_agent", artist_agent);
+    graph.add_node("artist_agent", artist_agent)
 
     graph.set_entry_point("reader_agent")
     graph.add_edge("reader_agent", "director_agent")
-    graph.add_edge("director_agent", "artist_agent");
-    graph.set_finish_point("artist_agent")    
+    graph.add_edge("director_agent", "artist_agent")
+    graph.set_finish_point("artist_agent")
     return graph.compile()
 
 

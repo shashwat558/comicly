@@ -1,15 +1,16 @@
-from typing import Any, Dict, List, Optional, TypedDict
 import datetime
+from typing import Any, TypedDict
+
 
 class ReaderOutput(TypedDict):
     summary: str
     scene: str
-    key_visuals: List[str]
-    entities: List[str]
+    key_visuals: list[str]
+    entities: list[str]
     emotions: str
-    actions:  List[str]
+    actions:  list[str]
     dialogue_summary: str
-    themes: List[str]
+    themes: list[str]
     tension_level: float
 
 class DirectorOutput(TypedDict):
@@ -18,35 +19,44 @@ class StorySummary(TypedDict):
     summary: str
     current: str
     tone: str
-    active_threads: List[str]
+    active_threads: list[str]
 
 class ArtistOutput(TypedDict):
     image_url: str
 class IndividualCharacterSummary(TypedDict):
     appearance: str
-    traits: List[str]
+    traits: list[str]
+    visual_anchor_tokens: list[str]
     status: str
     emotion: str
+    first_appearance_page: 1
+    last_seen_page: int
 
-CharactersSummary = Dict[str, IndividualCharacterSummary]
+CharactersSummary = dict[str, IndividualCharacterSummary]
     
 class VisualStyle(TypedDict):
     art_style: str
     lighting: str
-    palette: List[str]
+    palette: list[str]
     realism: str
+    seed_anchor: int
+    rendering_mode: str
     
 class IndividualCharacterRelationship(TypedDict):
     trust: float
     last_interaction: str
     mood: str
+    tension_level: float
     
 
-Relationships = Dict[str, IndividualCharacterRelationship]
+Relationships = dict[str, IndividualCharacterRelationship]
     
 class SystemMeta(TypedDict):
     last_image_url: str
     page_number: int
+    book_id: str
+    memory_version: int
+    checksum: str
     timestamp: datetime
     last_updated_by: str
 class MemoryAgentOutput(TypedDict):
@@ -63,15 +73,15 @@ class BookMeta(TypedDict):
     isbn: str
 
 class AgentState(TypedDict):
-    page_text: Optional[str]
+    page_text: str | None
     page_number: int
-    prev_image_url: Optional[str]
-    director_output: Optional[DirectorOutput]
-    current_image_url: Optional[str]
-    reader_output: Optional[ReaderOutput]
-    artist_output: Optional[ArtistOutput]
-    memory: Optional[MemoryAgentOutput]
-    visual_prompt: Optional[str]
-    image_metadata: Optional[Dict[str, Any]]
-    book_meta: Optional[BookMeta]
+    prev_image_url: str | None
+    director_output: DirectorOutput | None
+    current_image_url: str | None
+    reader_output: ReaderOutput | None
+    artist_output: ArtistOutput | None
+    memory: MemoryAgentOutput | None
+    visual_prompt: str | None
+    image_metadata: dict[str, Any] | None
+    book_meta: BookMeta | None
     

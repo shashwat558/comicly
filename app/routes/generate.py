@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -9,17 +9,17 @@ from app.graph.orchestrator import get_default_state, run_graph
 class GenerationRequest(BaseModel):
     page_number: int = Field(..., ge=1)
     page_text: str
-    memory: Optional[Dict[str, Any]] = None
-    prev_image_url: Optional[str] = None
-    current_image_url: Optional[str] = None
-    reader_output: Optional[Dict[str, Any]] = None
-    director_output: Optional[Dict[str, Any]] = None
-    visual_prompt: Optional[str] = None
-    image_metadata: Optional[Dict[str, Any]] = None
+    memory: dict[str, Any] | None = None
+    prev_image_url: str | None = None
+    current_image_url: str | None = None
+    reader_output: dict[str, Any] | None = None
+    director_output: dict[str, Any] | None = None
+    visual_prompt: str | None = None
+    image_metadata: dict[str, Any] | None = None
 
 
 class GenerationResponse(BaseModel):
-    state: Dict[str, Any]
+    state: dict[str, Any]
 
 
 router = APIRouter()

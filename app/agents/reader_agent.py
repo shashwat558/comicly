@@ -1,27 +1,18 @@
-from app.agents.types.types import AgentState
-from app.prompts import build_reader_prompt
-from langchain.agents import create_agent
-from app.schemas import ReaderOutputSchema
-from langchain_google_genai import ChatGoogleGenerativeAI
-from dotenv import load_dotenv;
 import os
 
+from dotenv import load_dotenv
+from langchain.agents import create_agent
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-load_dotenv();
+from app.agents.types.types import AgentState
+from app.prompts import build_reader_prompt
+from app.schemas import ReaderOutputSchema
 
-gemini_api_key = os.getenv("GOOGLE_API_KEY");
-print(gemini_api_key)
+load_dotenv()
+
+gemini_api_key = os.getenv("GOOGLE_API_KEY")
 def reader_agent(state: AgentState) -> AgentState:
-    """_summary_
-       This agent reads the text and extract different key points for the director agent
-
-    Args:
-        state (AgentState): For getting state information such as page_text, story, characters etc. 
-
-    Returns:
-        AgentState: Returns summary, scene, key_visuals etc.
-    """
-    page_number = state['page_number']  
+    page_number = state['page_number']
     if page_number == 1:
         story = {
             "summary": "",
@@ -34,15 +25,15 @@ def reader_agent(state: AgentState) -> AgentState:
         state['memory']['story'] = story
         state['memory']['characters'] = characters
         state['memory']['relationships'] = relationships
-       
+
     story = state['memory']['story']
     characters = state['memory']['characters']
     relationships = state['memory']['relationships']
     page_text = state['page_text']
 
     prompt = build_reader_prompt(story=story, characters=characters, relationships=relationships, page_text=page_text)
-    print(prompt);
-    
+    print(prompt)
+
     model = ChatGoogleGenerativeAI(
       model="gemini-2.5-flash",
       temperature=1.0,
@@ -54,14 +45,14 @@ def reader_agent(state: AgentState) -> AgentState:
         model=model,
         response_format=ReaderOutputSchema
     )
-    
+
     result = agent.invoke({
         "messages": [{"role": "user", "content": prompt}]
     });
-    
+
     state['reader_output'] = result["structured_response"]
     print("Reader Agent Output:", state['reader_output'])
     print("-----")
     return state
-    
+
 
