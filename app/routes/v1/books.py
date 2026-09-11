@@ -54,13 +54,27 @@ async def upload_book(
     )
     db.add(book)
     await db.flush()
-    for i, chunk in enumerate(chunks, start=1):
-        db.add(Page(book_id=book.id, page_no=i, text=chunk, tokens=len(enc.encode(chunk))))
+    for i, (chunk, pdf_page) in enumerate(chunks, start=1):
+        db.add(Page(book_id=book.id, page_no=i, text=chunk, tokens=len(enc.encode(chunk)), pdf_page=pdf_page))
+
+    # keep the original around so the reader can show real pages
+    ext = {"pdf": ".pdf", "epub": ".epub", "txt": ".txt"}.get(kind, ".bin")
+    content_type = file.content_type or "application/octet-stream"
+    try:
+        from app.core import s3 as s3core
+        book.source_key = f"{book.id}/source{ext}"
+        book.source_content_type = content_type
+        await s3core.upload_bytes(book.source_key, data, content_type)
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(502, f"Could not store the source file: {e}")
+
     await db.commit()
     await db.refresh(book)
     return BookDetail(
         id=book.id, title=book.title, author=book.author,
         total_pages=book.total_pages, status=book.status, style_lock=None,
+        kind=kind, has_source=True,
     )
 
 
@@ -85,10 +99,39 @@ async def get_book(
 ):
     book = await owned_book(db, user, book_id)
     style = book.style_lock
+    meta = book.book_metadata or {}
     return BookDetail(
         id=book.id, title=book.title, author=book.author,
         total_pages=book.total_pages, status=book.status,
         style_lock=style,  # type: ignore[arg-type]
+        kind=str(meta.get("kind", "txt")), has_source=bool(book.source_key),
+    )
+
+
+@router.get("/{book_id}/source")
+async def get_source(
+    book_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    from fastapi.responses import Response
+
+    from app.core import s3 as s3core
+
+    book = await owned_book(db, user, book_id)
+    if not book.source_key:
+        raise HTTPException(404, "No source file stored for this book, re-upload it for page view.")
+    try:
+        data = await s3core.download_key(book.source_key)
+    except Exception:
+        raise HTTPException(502, "Could not fetch the source file.")
+    meta = book.book_metadata or {}
+    filename = str(meta.get("filename") or f"{book.title}.pdf")
+    safe = "".join(c if c.isalnum() or c in "._- " else "_" for c in filename).strip() or "book.pdf"
+    return Response(
+        content=data,
+        media_type=book.source_content_type or "application/octet-stream",
+        headers={"Content-Disposition": f'inline; filename="{safe}"'},
     )
 
 

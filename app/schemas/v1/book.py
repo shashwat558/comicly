@@ -28,6 +28,7 @@ class PageOut(BaseModel):
     page_no: int
     text: str
     tokens: int
+    pdf_page: int | None = None
 
     model_config = {"from_attributes": True}
 
@@ -62,5 +63,7 @@ class BookDetail(BaseModel):
     total_pages: int
     status: str
     style_lock: StyleLock | None = None
+    kind: str = "txt"
+    has_source: bool = False
 
     model_config = {"from_attributes": True}

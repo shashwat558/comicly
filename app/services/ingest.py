@@ -20,14 +20,19 @@ def _clean(text: str) -> str:
 
 
 def extract_pdf(data: bytes) -> str:
+    return _clean("\n\n".join(extract_pdf_pages(data)))
+
+
+def extract_pdf_pages(data: bytes) -> list[str]:
+    # one entry per physical page, never skip empties or numbering drifts
     reader = PdfReader(io.BytesIO(data))
-    parts: list[str] = []
+    pages: list[str] = []
     for page in reader.pages:
         try:
-            parts.append(page.extract_text() or "")
+            pages.append(_clean(page.extract_text() or ""))
         except Exception:
-            continue
-    return _clean("\n\n".join(parts))
+            pages.append("")
+    return pages
 
 
 def extract_epub(data: bytes) -> str:
@@ -71,20 +76,27 @@ def chunk_text(text: str, target: int = TARGET_TOKENS, hard_max: int = MAX_TOKEN
     return [c for c in chunks if c.strip()]
 
 
-def parse_book(filename: str, content_type: str, data: bytes) -> tuple[str, list[str]]:
+def parse_book(filename: str, content_type: str, data: bytes) -> tuple[str, list[tuple[str, int | None]]]:
+    # chunks come back as (text, pdf_page); pdf_page is None for epub/txt.
+    # pdfs chunk per physical page so the viewer and the segments stay in lockstep.
     name = (filename or "").lower()
     ctype = (content_type or "").lower()
     if name.endswith(".pdf") or "pdf" in ctype:
-        text = extract_pdf(data)
         kind = "pdf"
+        chunks: list[tuple[str, int | None]] = []
+        for i, page_text in enumerate(extract_pdf_pages(data), start=1):
+            subs = chunk_text(page_text) if page_text.strip() else [""]
+            chunks.extend((s, i) for s in subs)
     elif name.endswith(".epub") or "epub" in ctype or "oebps" in ctype:
         text = extract_epub(data)
         kind = "epub"
+        chunks = [(c, None) for c in chunk_text(text)]
     elif name.endswith(".txt") or "text/plain" in ctype:
         text = _clean(data.decode("utf-8", errors="ignore"))
         kind = "txt"
+        chunks = [(c, None) for c in chunk_text(text)]
     else:
         raise ValueError(f"Unsupported file type: {filename} ({content_type})")
-    if not text or len(text.strip()) < 50:
+    if not any(t.strip() for t, _ in chunks):
         raise ValueError("No readable text extracted - empty or scanned PDF?")
-    return kind, chunk_text(text)
+    return kind, [(t, p) for t, p in chunks if t.strip() or p is not None]

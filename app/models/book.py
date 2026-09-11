@@ -19,6 +19,9 @@ class Book(Base):
     title: Mapped[str] = mapped_column(String(500), nullable=False)
     author: Mapped[str] = mapped_column(String(500), default="Unknown")
     book_metadata: Mapped[dict] = mapped_column("metadata", JSONB, default=dict)
+    # original upload kept for the page viewer, null on books from before this existed
+    source_key: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    source_content_type: Mapped[str | None] = mapped_column(String(200), nullable=True)
 
     # written once on page 1, treated as read-only after that
     style_lock: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
@@ -41,5 +44,7 @@ class Page(Base):
     page_no: Mapped[int] = mapped_column(Integer, nullable=False)
     text: Mapped[str] = mapped_column(Text, nullable=False)
     tokens: Mapped[int] = mapped_column(Integer, default=0)
+    # physical pdf page this segment came from, null for epub/txt
+    pdf_page: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     book: Mapped[Book] = relationship(back_populates="pages")

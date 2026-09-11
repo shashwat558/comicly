@@ -29,13 +29,29 @@ async def ensure_bucket() -> None:
 
 
 async def upload_png(key: str, data: bytes) -> str:
+    return await upload_bytes(key, data, "image/png")
+
+
+async def upload_bytes(key: str, data: bytes, content_type: str) -> str:
     s = get_settings()
     session = aioboto3.Session()
     async with session.client("s3", **_client_kwargs()) as s3:
         await s3.put_object(
-            Bucket=s.s3_bucket, Key=key, Body=data, ContentType="image/png"
+            Bucket=s.s3_bucket, Key=key, Body=data, ContentType=content_type
         )
     return f"{s.s3_public_url.rstrip('/')}/{key}"
+
+
+async def download_key(key: str) -> bytes:
+    s = get_settings()
+    session = aioboto3.Session()
+    async with session.client("s3", **_client_kwargs()) as s3:
+        resp = await s3.get_object(Bucket=s.s3_bucket, Key=key)
+        body = resp["Body"]
+        try:
+            return await body.read()
+        finally:
+            body.close()
 
 
 async def presigned_get(key: str, expires: int = 3600) -> str:
