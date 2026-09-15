@@ -17,10 +17,14 @@ class Character(Base):
 
     appearance: Mapped[str] = mapped_column(String(2000), default="")
     traits: Mapped[list] = mapped_column(JSONB, default=list)
-    # short drawable tags (hair, clothes, colors), pasted into every image prompt
+
     visual_anchors: Mapped[list] = mapped_column(JSONB, default=list)
     reference_image_url: Mapped[str | None] = mapped_column(String(2000), nullable=True)
     reference_image_key: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+
+    sheet_image_url: Mapped[str | None] = mapped_column(String(2000), nullable=True)
+    sheet_image_key: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    sheet_version: Mapped[int] = mapped_column(Integer, default=0)
     first_page: Mapped[int] = mapped_column(Integer, default=1)
     last_seen_page: Mapped[int] = mapped_column(Integer, default=1)
 

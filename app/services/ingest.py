@@ -24,7 +24,7 @@ def extract_pdf(data: bytes) -> str:
 
 
 def extract_pdf_pages(data: bytes) -> list[str]:
-    # one entry per physical page, never skip empties or numbering drifts
+
     reader = PdfReader(io.BytesIO(data))
     pages: list[str] = []
     for page in reader.pages:
@@ -48,7 +48,7 @@ def extract_epub(data: bytes) -> str:
 
 
 def chunk_text(text: str, target: int = TARGET_TOKENS, hard_max: int = MAX_TOKENS) -> list[str]:
-    # split on blank lines so chunks never cut mid-paragraph
+
     paras = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
     chunks: list[str] = []
     cur: list[str] = []
@@ -77,8 +77,8 @@ def chunk_text(text: str, target: int = TARGET_TOKENS, hard_max: int = MAX_TOKEN
 
 
 def parse_book(filename: str, content_type: str, data: bytes) -> tuple[str, list[tuple[str, int | None]]]:
-    # chunks come back as (text, pdf_page); pdf_page is None for epub/txt.
-    # pdfs chunk per physical page so the viewer and the segments stay in lockstep.
+
+
     name = (filename or "").lower()
     ctype = (content_type or "").lower()
     if name.endswith(".pdf") or "pdf" in ctype:

@@ -12,19 +12,24 @@ class Book(Base):
     __tablename__ = "books"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    # null only for books created before auth existed, those stay invisible
+
     owner_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True
     )
     title: Mapped[str] = mapped_column(String(500), nullable=False)
     author: Mapped[str] = mapped_column(String(500), default="Unknown")
     book_metadata: Mapped[dict] = mapped_column("metadata", JSONB, default=dict)
-    # original upload kept for the page viewer, null on books from before this existed
+
     source_key: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     source_content_type: Mapped[str | None] = mapped_column(String(200), nullable=True)
 
-    # written once on page 1, treated as read-only after that
+
     style_lock: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+
+
+    style_bible: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+
+    pro_calls_used: Mapped[int] = mapped_column(Integer, default=0)
     status: Mapped[str] = mapped_column(String(32), default="ready")
     total_pages: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -44,7 +49,7 @@ class Page(Base):
     page_no: Mapped[int] = mapped_column(Integer, nullable=False)
     text: Mapped[str] = mapped_column(Text, nullable=False)
     tokens: Mapped[int] = mapped_column(Integer, default=0)
-    # physical pdf page this segment came from, null for epub/txt
+
     pdf_page: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     book: Mapped[Book] = relationship(back_populates="pages")

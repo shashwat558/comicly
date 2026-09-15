@@ -44,7 +44,7 @@ def create_app() -> FastAPI:
     app.include_router(books_router, prefix="/api/v1/books", tags=["books"], dependencies=authed)
     app.include_router(pages_router, prefix="/api/v1/books", tags=["pages"], dependencies=authed)
     app.include_router(generate_router, prefix="/api/v1/books", tags=["generate"], dependencies=authed)
-    # jobs handles its own auth (the SSE stream also accepts ?token=)
+
     app.include_router(jobs_router, prefix="/api/v1/jobs", tags=["jobs"])
 
 

@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 async def owned_book(db: AsyncSession, user: User, book_id: uuid.UUID) -> Book:
-    # 404 either way so nobody can probe other users' ids
+
     book = await db.get(Book, book_id)
     if book is None or book.owner_id != user.id:
         raise HTTPException(404, "Book not found")
@@ -57,7 +57,7 @@ async def upload_book(
     for i, (chunk, pdf_page) in enumerate(chunks, start=1):
         db.add(Page(book_id=book.id, page_no=i, text=chunk, tokens=len(enc.encode(chunk)), pdf_page=pdf_page))
 
-    # keep the original around so the reader can show real pages
+
     ext = {"pdf": ".pdf", "epub": ".epub", "txt": ".txt"}.get(kind, ".bin")
     content_type = file.content_type or "application/octet-stream"
     try:
@@ -104,6 +104,8 @@ async def get_book(
         id=book.id, title=book.title, author=book.author,
         total_pages=book.total_pages, status=book.status,
         style_lock=style,  # type: ignore[arg-type]
+        style_bible=book.style_bible,
+        pro_calls_used=int(getattr(book, "pro_calls_used", 0) or 0),
         kind=str(meta.get("kind", "txt")), has_source=bool(book.source_key),
     )
 
@@ -161,6 +163,9 @@ async def list_frames(
         out.append(FrameOut(
             page_no=r.page_no, image_url=r.image_url, status=r.status,
             seed=r.seed, reader_out=r.reader_out, director_out=r.director_out,
+            quality=r.quality or "auto", drift_score=r.drift_score,
+            critic_out=r.critic_out, panel_layout=r.panel_layout,
+            retry_count=int(r.retry_count or 0), flagged=bool(r.flagged),
         ))
     return out
 

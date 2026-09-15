@@ -1,7 +1,8 @@
 from langchain.agents import create_agent
+from pydantic import BaseModel, Field
 
 from app.agents.io import ReaderOutput
-from app.agents.llm import text_llm
+from app.agents.llm import invoke_structured, text_llm
 from app.agents.prompts import build_reader_prompt
 from app.agents.state import AgentState
 
@@ -13,11 +14,25 @@ def reader_node(state: AgentState) -> AgentState:
         relationships=state.get("relationships", {}),
         page_text=state.get("page_text", ""),
     )
-    # low temp so the same page reads the same way every run
-    agent = create_agent(model=text_llm(0.3), response_format=ReaderOutput)
-    result = agent.invoke({"messages": [{"role": "user", "content": prompt}]})
-    structured = result.get("structured_response")
-    if structured is None:
-        raise RuntimeError("Reader agent returned no structured output")
-    data = structured.model_dump() if hasattr(structured, "model_dump") else dict(structured)
+
+
+    agent = create_agent(model=text_llm(0.0), response_format=ReaderOutput)
+    data = invoke_structured(agent, prompt)
+    data.setdefault("resolved_characters", [])
+    data.setdefault("pronoun_map", {})
+
+    ents = list(data.get("entities", []) or [])
+    for name in data.get("resolved_characters", []) or []:
+        if name and name not in ents:
+            ents.append(name)
+    data["entities"] = ents
     return {**state, "reader_out": data}
+
+
+class _ReaderCompat(BaseModel):
+    """Loose fallback, never used for output - documents required keys."""
+
+    summary: str = ""
+    scene: str = ""
+    key_visuals: list[str] = Field(default_factory=list)
+    entities: list[str] = Field(default_factory=list)

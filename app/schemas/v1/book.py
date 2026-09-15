@@ -39,6 +39,8 @@ class CharacterOut(BaseModel):
     traits: list[str] = []
     visual_anchors: list[str] = []
     reference_image_url: str | None = None
+    sheet_image_url: str | None = None
+    sheet_version: int = 0
     first_page: int = 1
     last_seen_page: int = 1
 
@@ -52,6 +54,12 @@ class FrameOut(BaseModel):
     seed: int | None = None
     reader_out: dict | None = None
     director_out: dict | None = None
+    quality: str = "auto"
+    drift_score: float | None = None
+    critic_out: dict | None = None
+    panel_layout: dict | None = None
+    retry_count: int = 0
+    flagged: bool = False
 
     model_config = {"from_attributes": True}
 
@@ -63,6 +71,8 @@ class BookDetail(BaseModel):
     total_pages: int
     status: str
     style_lock: StyleLock | None = None
+    style_bible: dict | None = None
+    pro_calls_used: int = 0
     kind: str = "txt"
     has_source: bool = False
 

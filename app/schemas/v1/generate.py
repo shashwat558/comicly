@@ -1,4 +1,5 @@
 import uuid
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -9,6 +10,9 @@ class GenerateRequest(BaseModel):
     page_no: int = Field(..., ge=1)
     style_override: StyleLock | None = None
     force: bool = False
+
+    quality: Literal["draft", "pro", "auto"] = "auto"
+    panels: int = Field(default=1, ge=1, le=4)
 
 
 class GenerateResponse(BaseModel):

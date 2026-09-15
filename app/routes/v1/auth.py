@@ -31,7 +31,7 @@ async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
     user = (
         await db.execute(select(User).where(User.email == email))
     ).scalar_one_or_none()
-    # same response for unknown email and wrong password, don't leak which
+
     if user is None or not user.is_active or not verify_password(body.password, user.password_hash):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid email or password.")
     return TokenResponse(access_token=create_token(user.id))

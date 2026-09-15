@@ -19,7 +19,7 @@ async def stream_user(
     token: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
 ) -> User:
-    # EventSource can't send headers, so the stream also takes ?token=
+
     header = request.headers.get("authorization", "")
     if header.lower().startswith("bearer "):
         token = header[7:].strip()

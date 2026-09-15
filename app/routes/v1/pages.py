@@ -64,4 +64,7 @@ async def get_frame(
     return FrameOut(
         page_no=row.page_no, image_url=row.image_url, status=row.status,
         seed=row.seed, reader_out=row.reader_out, director_out=row.director_out,
+        quality=row.quality or "auto", drift_score=row.drift_score,
+        critic_out=row.critic_out, panel_layout=row.panel_layout,
+        retry_count=int(row.retry_count or 0), flagged=bool(row.flagged),
     )
